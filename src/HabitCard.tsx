@@ -58,10 +58,10 @@ export default function HabitCard({ habit, completions, note, onToggleToday, onD
 
       {/* Bottom row: streak + check button */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-1.5">
-          <span className="text-base">🔥</span>
-          <span className="text-sm font-semibold text-amber-500">{streak}</span>
-          <span className="text-xs text-gray-400">day streak</span>
+        <div className="flex items-center gap-1">
+          <span className="text-xl leading-none">🔥</span>
+          <span className="text-lg font-bold text-amber-500 leading-none">{streak}</span>
+          <span className="text-xs text-gray-400 ml-0.5">day streak</span>
         </div>
         <button
           onClick={() => onToggleToday(habit.id)}
