@@ -4,6 +4,14 @@ import type { HabitStore, Habit } from './types';
 import { localDateKey, calcStreak } from './dates';
 import HabitCard from './HabitCard';
 
+function formatDate(key: string): { weekday: string; rest: string } {
+  const [y, m, d] = key.split('-').map(Number);
+  const date = new Date(y, m - 1, d);
+  const weekday = date.toLocaleDateString('en-US', { weekday: 'long' });
+  const rest = date.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
+  return { weekday, rest };
+}
+
 const MAX_HABITS = 5;
 
 function genId() {
@@ -63,15 +71,43 @@ export default function App() {
     });
   }
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-amber-50 px-4 py-8">
-      <div className="max-w-md mx-auto">
+  function resetToday() {
+    setStore((s) => {
+      const completions = { ...s.completions };
+      for (const id of Object.keys(completions)) {
+        completions[id] = completions[id].filter((d) => d !== today);
+      }
+      return { ...s, completions };
+    });
+  }
 
-        {/* Header */}
-        <div className="mb-6 text-center">
-          <h1 className="text-3xl font-bold text-gray-800 tracking-tight mb-1">Habits</h1>
-          <p className="text-sm text-gray-400">build one day at a time</p>
+  const { weekday, rest } = formatDate(today);
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-amber-50">
+
+      {/* Sticky header */}
+      <header className="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-purple-100 shadow-sm">
+        <div className="max-w-md mx-auto px-4 py-3 flex items-center justify-between gap-3">
+          <div className="leading-tight">
+            <div className="text-2xl font-bold text-gray-800 tracking-tight">{weekday}</div>
+            <div className="text-sm text-gray-400">{rest}</div>
+          </div>
+          {completedToday > 0 && (
+            <button
+              onClick={resetToday}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium text-rose-400 bg-rose-50 hover:bg-rose-100 active:scale-95 transition-all"
+            >
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+              Reset today
+            </button>
+          )}
         </div>
+      </header>
+
+      <div className="max-w-md mx-auto px-4 py-6">
 
         {/* Stats banner */}
         <div className="bg-white rounded-2xl p-4 shadow-sm border border-purple-100 mb-6 flex divide-x divide-purple-100">
