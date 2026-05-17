@@ -23,13 +23,21 @@ export function dayLabel(key: string): string {
   return ['S', 'M', 'T', 'W', 'T', 'F', 'S'][new Date(y, m - 1, d).getDay()];
 }
 
-/** Compute current streak for a habit given its sorted completion date keys */
+/** Compute current streak for a habit given its completion date keys.
+ *  Counts consecutive days ending today (if done) or yesterday (if not yet done today). */
 export function calcStreak(completions: string[]): number {
   if (!completions.length) return 0;
   const sorted = [...completions].sort().reverse();
   const today = localDateKey();
+  const yd = new Date();
+  yd.setDate(yd.getDate() - 1);
+  const yesterday = localDateKey(yd);
+
+  // Allow the streak to continue from yesterday when today hasn't been checked yet
+  const start = completions.includes(today) ? today : yesterday;
+
   let streak = 0;
-  let cursor = today;
+  let cursor = start;
 
   for (const key of sorted) {
     if (key === cursor) {

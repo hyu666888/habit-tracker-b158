@@ -63,11 +63,17 @@ export default function App() {
     });
   }
 
+  function updateNote(id: string, note: string) {
+    setStore((s) => ({ ...s, notes: { ...s.notes, [id]: note } }));
+  }
+
   function deleteHabit(id: string) {
     setStore((s) => {
       const completions = { ...s.completions };
+      const notes = { ...s.notes };
       delete completions[id];
-      return { ...s, habits: s.habits.filter((h) => h.id !== id), completions };
+      delete notes[id];
+      return { ...s, habits: s.habits.filter((h) => h.id !== id), completions, notes };
     });
   }
 
@@ -138,8 +144,10 @@ export default function App() {
               key={h.id}
               habit={h}
               completions={store.completions[h.id] ?? []}
+              note={store.notes[h.id] ?? ''}
               onToggleToday={toggleToday}
               onDelete={deleteHabit}
+              onNoteChange={updateNote}
             />
           ))}
         </div>

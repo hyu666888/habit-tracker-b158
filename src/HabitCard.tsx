@@ -4,11 +4,13 @@ import { localDateKey, last7Days, dayLabel, calcStreak } from './dates';
 interface Props {
   habit: Habit;
   completions: string[];
+  note: string;
   onToggleToday: (id: string) => void;
   onDelete: (id: string) => void;
+  onNoteChange: (id: string, note: string) => void;
 }
 
-export default function HabitCard({ habit, completions, onToggleToday, onDelete }: Props) {
+export default function HabitCard({ habit, completions, note, onToggleToday, onDelete, onNoteChange }: Props) {
   const today = localDateKey();
   const doneToday = completions.includes(today);
   const streak = calcStreak(completions);
@@ -83,6 +85,16 @@ export default function HabitCard({ habit, completions, onToggleToday, onDelete 
           )}
         </button>
       </div>
+
+      {/* Note input */}
+      <input
+        type="text"
+        value={note}
+        onChange={(e) => onNoteChange(habit.id, e.target.value)}
+        placeholder="Add a note…"
+        maxLength={120}
+        className="w-full text-xs text-gray-500 placeholder-gray-300 bg-gray-50 rounded-lg px-3 py-2 border border-transparent focus:border-purple-200 focus:bg-white focus:outline-none transition-colors"
+      />
     </div>
   );
 }

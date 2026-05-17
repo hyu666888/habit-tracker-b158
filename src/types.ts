@@ -7,4 +7,5 @@ export interface Habit {
 export interface HabitStore {
   habits: Habit[];
   completions: Record<string, string[]>; // habitId -> array of YYYY-MM-DD datekeys
+  notes: Record<string, string>;         // habitId -> one-line note
 }
